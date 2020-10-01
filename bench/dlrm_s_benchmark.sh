@@ -12,32 +12,32 @@ else
 fi
 #echo $dlrm_extra_option
 
-cpu=1
+cpu=0
 gpu=1
 pt=1
-c2=1
+c2=0
 
 ncores=28 #12 #6
 nsockets="0"
 
-ngpus="1 2 4 8"
+ngpus="1" # "1 2 4 8"
 
 numa_cmd="numactl --physcpubind=0-$((ncores-1)) -m $nsockets" #run on one socket, without HT
 dlrm_pt_bin="python dlrm_s_pytorch.py"
 dlrm_c2_bin="python dlrm_s_caffe2.py"
 
-data=random #synthetic
+data=dataset #random synthetic
 print_freq=100
 rand_seed=727
 
 c2_net="async_scheduling"
 
 #Model param
-mb_size=2048 #1024 #512 #256
-nbatches=1000 #500 #100
-bot_mlp="512-512-64"
-top_mlp="1024-1024-1024-1"
-emb_size=64
+mb_size=256 #1024 #512 #256
+nbatches=1 #500 #100
+bot_mlp="13-512-256-128" #"512-512-64"
+top_mlp="1024-1024-512-256-1" #"1024-1024-1024-1"
+emb_size=128 #64
 nindices=100
 emb="1000000-1000000-1000000-1000000-1000000-1000000-1000000-1000000"
 interaction="dot"
@@ -47,6 +47,8 @@ tmb_size=16384
 #_args="--mini-batch-size="${mb_size}\
 _args=" --num-batches="${nbatches}\
 " --data-generation="${data}\
+" --raw-data-file=./data/train.txt"\
+" --processed-data-file=./data/kaggleAdDisplayChallenge_processed.npz"\
 " --arch-mlp-bot="${bot_mlp}\
 " --arch-mlp-top="${top_mlp}\
 " --arch-sparse-feature-size="${emb_size}\
@@ -55,8 +57,8 @@ _args=" --num-batches="${nbatches}\
 " --arch-interaction-op="${interaction}\
 " --numpy-rand-seed="${rand_seed}\
 " --print-freq="${print_freq}\
-" --print-time"\
-" --enable-profiling "
+" --print-time" #\
+#" --enable-profiling "
 
 c2_args=" --caffe2-net-type="${c2_net}
 
@@ -137,7 +139,7 @@ if [ $gpu = 1 ]; then
       echo "-------------------------------"
       cmd="$cuda_arg $dlrm_c2_bin --mini-batch-size=$_mb_size $_args $c2_args --use-gpu $dlrm_extra_option 1> $outf 2> $outp"
       echo $cmd
-      eval $cmd
+      eval "$cmd"
       min=$(grep "iteration" $outf | awk 'BEGIN{best=999999} {if (best > $7) best=$7} END{print best}')
       echo "Min time per iteration = $min"
       # move profiling file (collected from stderr above)
