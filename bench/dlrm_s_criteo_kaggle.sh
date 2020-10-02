@@ -14,7 +14,7 @@ else
 fi
 #echo $dlrm_extra_option
 
-dlrm_pt_bin="python dlrm_s_pytorch.py"
+dlrm_pt_bin="python -u dlrm_s_pytorch.py"
 dlrm_c2_bin="python dlrm_s_caffe2.py"
 
 echo "run pytorch ..."
@@ -27,8 +27,8 @@ time $dlrm_pt_bin \
     --arch-mlp-top="512-256-1" \
     --data-generation=dataset \
     --data-set=kaggle \
-    --raw-data-file=./data/train.txt \
-    --processed-data-file=./data/kaggleAdDisplayChallenge_processed.npz \
+    --raw-data-file=/data/train.txt \
+    --processed-data-file=/data/kaggleAdDisplayChallenge_processed.npz \
     --loss-function=bce \
     --round-targets=True \
     --learning-rate=0.1 \
@@ -37,7 +37,7 @@ time $dlrm_pt_bin \
     --print-time \
     --test-mini-batch-size=16384 \
     --test-num-workers=1 \
-    --nepochs=2 $dlrm_extra_option #2>&1 | tee run_kaggle_pt.log
+    --nepochs=2 $dlrm_extra_option 2>&1 | tee /data/rc_dlrm_bench.log
 
 #echo "run caffe2 ..."
 # WARNING: the following parameters will be set based on the data set
