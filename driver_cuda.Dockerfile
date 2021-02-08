@@ -5,8 +5,8 @@ RUN apt-get update && \
     apt-get install -y apt-utils python3 python3-pip cmake \
     libprotobuf-dev protobuf-compiler
 
-ADD custome_requirements.txt .
-RUN pip3 install -r custome_requirements.txt
+ADD driver_cuda_requirements.txt .
+RUN pip3 install -r driver_cuda_requirements.txt
 
 RUN pip3 install torch==1.7.1+cu92 torchvision==0.8.2+cu92 torchaudio==0.7.2 -f https://download.pytorch.org/whl/torch_stable.html
 
